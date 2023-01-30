@@ -64,6 +64,7 @@ class ShippingService implements ShippingServiceInterface
      * @return Common\Entity\Rate
      */
     private function _getRateId(Array $rates): Common\Entity\Rate {
+        // TODO: Implement logic for choosing rate
         $rateNum = rand(0, count($rates)-1);
         return $rates[$rateNum];
     }
