@@ -26,7 +26,7 @@ $package->dimension = $packageDimension;
 $currentDate     = new DateTime();
 $order           = new App\Data\Order($orderData['order_id'], $customer, $currentDate, $package, ['channelType' => 'EXTERNAL']);
 $shippingService = new \App\ShippingService();
-$trackingNumber  = "";
+$trackingNumber  = '';
 try {
     $trackingNumber = $shippingService->ship($order, $buyer);
 } catch (Exception $e) {
