@@ -1,0 +1,11 @@
+{
+    "autoload": {
+        "psr-4": {
+            "App\\": "src"
+        }
+    },
+    "require": {
+        "aws/aws-sdk-php": "^3.257",
+        "php-curl-class/php-curl-class": "^9.13"
+    }
+}
