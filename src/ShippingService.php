@@ -7,7 +7,7 @@ use App\Common\AbstractLogger;
 use App\Common\API\AbstractAmazonAPI;
 use App\Common\Exception\API;
 use App\Data;
-use App\Common\API\V2;
+use App\Common\API\V1;
 use AmazonPHP\SellingPartner\Model;
 use DateTime;
 

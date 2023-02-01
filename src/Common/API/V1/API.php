@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\API\V2;
+namespace App\Common\API\V1;
 
 use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\Api\FbaOutboundApi\FulfillmentOutboundSDK;

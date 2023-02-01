@@ -8,7 +8,7 @@ $order           = new \App\Data\Order('16400');
 $buyer           = \App\Data\Buyer::createById('29664');
 $shippingService = new \App\ShippingService();
 
-$shippingService->setApi(new \App\Common\API\V2\API());
+$shippingService->setApi(new \App\Common\API\V1\API());
 
 $trackingNumber = null;
 try {
