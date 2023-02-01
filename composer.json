@@ -5,7 +5,8 @@
         }
     },
     "require": {
-        "aws/aws-sdk-php": "^3.257",
-        "php-curl-class/php-curl-class": "^9.13"
+        "php-curl-class/php-curl-class": "^9.13",
+        "amazon-php/sp-api-sdk": "*",
+        "guzzlehttp/guzzle": "^7.5"
     }
 }

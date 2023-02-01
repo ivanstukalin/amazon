@@ -13,7 +13,39 @@ class Buyer implements BuyerInterface
     public string $email;
     public string $phone;
     public string $address;
-    public array $data;
+
+    public function __construct(array $data)
+    {
+        $this->country_id    = $data['country_id'];
+        $this->country_code  = $data['country_code'];
+        $this->country_code3 = $data['country_code3'];
+        $this->name          = $data['name'];
+        $this->shop_username = $data['shop_username'];
+        $this->email         = $data['email'];
+        $this->phone         = $data['phone'];
+        $this->address       = $data['address'];
+    }
+
+    public static function createById(string $id): Buyer {
+        $data = file_get_contents("buyer.{$id}.json");
+        $decodedData = json_decode($data);
+
+        return new self($decodedData);
+    }
+
+    public function getData(): array
+    {
+        return [
+            'country_id' => $this->country_id,
+            'country_code' => $this->country_code,
+            'country_code3' => $this->country_code3,
+            'name' => $this->name,
+            'shop_username' => $this->shop_username,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'address' => $this->address,
+        ];
+    }
 
     /**
      * @inheritDoc
