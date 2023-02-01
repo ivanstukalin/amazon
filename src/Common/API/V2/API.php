@@ -12,23 +12,23 @@ use AmazonPHP\SellingPartner\Model;
 use AmazonPHP\SellingPartner\ModelInterface;
 use App\Common;
 use App\Common\API\AbstractAmazonAPI;
+use DateTime;
 use GuzzleHttp;
 
 class API extends AbstractAmazonAPI
 {
 
-    private ?FulfillmentOutboundSDK $_sdk;
-    private ?NotificationsSDK $_notification;
-    private ?AccessToken $_accessToken;
-    private ?string $_region;
+    private $_sdk;
+    private $_notification;
+    private $_accessToken;
+    private $_region;
 
 
     /**
      * @param array $data
      * @return array
-     * @throws Common\Exception\API\Api
-     * @throws Common\Exception\API\Auth
-     * @throws Common\Exception\API\BadRequest
+     * @throws Common\API\Exception\API\Api
+     * @throws Common\API\Exception\API\BadRequest
      */
     public function getFulfillmentPreview(array $data): array
     {
@@ -41,7 +41,7 @@ class API extends AbstractAmazonAPI
 
         $preparedData = [
             'marketplace_id'            => $data['marketplace_id'],
-            'address'                   => $this->_prepareAddress($data['buyer']['address']),
+            'address'                   => $this->_prepareAddress($data['buyer']),
             'items'                     => $preparedItems,
             'shipping_speed_categories' => $data['shipping_speed_categories'],
         ];
@@ -61,10 +61,10 @@ class API extends AbstractAmazonAPI
                     5
                 );
             } catch (\Exception $e) {
-                throw new Common\Exception\API\Api("Amazon API error: {$e->getMessage()}", $e->getCode());
+                throw new Common\API\Exception\API\Api("Amazon API error: {$e->getMessage()}", $e->getCode());
             }
         } catch (Exception\InvalidArgumentException $e) {
-            throw new Common\Exception\API\BadRequest(
+            throw new Common\API\Exception\API\BadRequest(
                 "Bad params in get fulfillment preview request, {$e->getMessage()}"
             );
         }
@@ -81,9 +81,8 @@ class API extends AbstractAmazonAPI
      * @param array $data
      * @param array $fulfillmentPreview
      * @return void
-     * @throws Common\Exception\API\Api
-     * @throws Common\Exception\API\Auth
-     * @throws Common\Exception\API\BadRequest
+     * @throws Common\API\Exception\API\Api
+     * @throws Common\API\Exception\API\BadRequest
      */
     public function createFulfillmentOrder(array $data, array $fulfillmentPreview): void
     {
@@ -119,9 +118,9 @@ class API extends AbstractAmazonAPI
                 throw new Exception\ApiException("Error in create fulfillment order request: {$encodedErrors}");
             }
         } catch (Exception\ApiException $e) {
-            throw new Common\Exception\API\Api("Amazon API error: {$e->getMessage()}", $e->getCode());
+            throw new Common\API\Exception\API\Api("Amazon API error: {$e->getMessage()}", $e->getCode());
         } catch (Exception\InvalidArgumentException $e) {
-            throw new Common\Exception\API\BadRequest("Bad params in get fulfillment preview request, {$e->getMessage()}");
+            throw new Common\API\Exception\API\BadRequest("Bad params in get fulfillment preview request, {$e->getMessage()}");
         }
     }
 
@@ -129,9 +128,8 @@ class API extends AbstractAmazonAPI
      * @param string $name
      * @param string $accountId
      * @return string
-     * @throws Common\Exception\API\Api
-     * @throws Common\Exception\API\Auth
-     * @throws Common\Exception\API\BadRequest
+     * @throws Common\API\Exception\API\Api
+     * @throws Common\API\Exception\API\BadRequest
      */
     public function createDestination(string $name, string $accountId): string {
         $this->_auth();
@@ -150,14 +148,21 @@ class API extends AbstractAmazonAPI
                 ])
             );
         } catch (Exception\InvalidArgumentException $e) {
-            throw new Common\Exception\API\BadRequest("Bad params in create destination request, {$e->getMessage()}");
+            throw new Common\API\Exception\API\BadRequest("Bad params in create destination request, {$e->getMessage()}");
         } catch (Exception\ApiException $e) {
-            throw new Common\Exception\API\Api("Amazon API error: {$e->getMessage()}", $e->getCode());
+            throw new Common\API\Exception\API\Api("Amazon API error: {$e->getMessage()}", $e->getCode());
         }
 
         return $destination->getPayload()->getDestinationId();
     }
 
+    /**
+     * @param string $notificationType
+     * @param string $destinationId
+     * @return void
+     * @throws Common\API\Exception\API\Api
+     * @throws Common\API\Exception\API\BadRequest
+     */
     public function createSubscription(string $notificationType, string $destinationId): void {
         $this->_auth();
 
@@ -172,18 +177,17 @@ class API extends AbstractAmazonAPI
                 ])
             );
         } catch (Exception\InvalidArgumentException $e) {
-            throw new Common\Exception\API\BadRequest("Bad params in create subscription request, {$e->getMessage()}");
+            throw new Common\API\Exception\API\BadRequest("Bad params in create subscription request, {$e->getMessage()}");
         } catch (Exception\ApiException $e) {
-            throw new Common\Exception\API\Api("Amazon API error: {$e->getMessage()}", $e->getCode());
+            throw new Common\API\Exception\API\Api("Amazon API error: {$e->getMessage()}", $e->getCode());
         }
     }
 
     /**
      * @param string $orderId
      * @return string
-     * @throws Common\Exception\API\Api
-     * @throws Common\Exception\API\Auth
-     * @throws Common\Exception\API\BadRequest
+     * @throws Common\API\Exception\API\Api
+     * @throws Common\API\Exception\API\BadRequest
      */
     public function getFulfillmentOrderTrackingNumber(string $orderId): string {
         $this->_auth();
@@ -194,7 +198,7 @@ class API extends AbstractAmazonAPI
                 $orderId
             );
         } catch (Exception\InvalidArgumentException $e) {
-            throw new Common\Exception\API\BadRequest("Bad params in get fulfillment order request, {$e->getMessage()}");
+            throw new Common\API\Exception\API\BadRequest("Bad params in get fulfillment order request, {$e->getMessage()}");
         } catch (Exception\ApiException $e) {
             try {
                 $fulfillmentOrder = $this->_retry(
@@ -204,7 +208,7 @@ class API extends AbstractAmazonAPI
                     5
                 );
             } catch (\Exception $e) {
-                throw new Common\Exception\API\Api("Amazon API error: {$e->getMessage()}", $e->getCode());
+                throw new Common\API\Exception\API\Api("Amazon API error: {$e->getMessage()}", $e->getCode());
             }
         }
         $trackingNumber = 0;
@@ -226,16 +230,16 @@ class API extends AbstractAmazonAPI
         if ($this->_accessToken === null) {
             try {
                 // TO DO: add some auth logic
-                $this->_accessToken = AccessToken::fromJSON(json_encode(TEST_AMAZON_USER_DATA), "test");
+                $this->_accessToken = AccessToken::fromJSON(json_encode(TEST_AMAZON_USER_DATA), 'test');
             } catch (\Exception $e) {
                 throw new Common\Exception\API\Auth($e->getMessage());
             }
         }
 
-        $currentTime = new \DateTime();
+        $currentTime = new DateTime();
         if ($this->_accessToken->expiresIn() <= $currentTime->getTimestamp()) {
             // TO DO: add some refresh logic
-            $this->_accessToken = AccessToken::fromJSON(json_encode(TEST_AMAZON_USER_DATA), "test");
+            $this->_accessToken = AccessToken::fromJSON(json_encode(TEST_AMAZON_USER_DATA), 'test');
         }
     }
 
@@ -305,7 +309,7 @@ class API extends AbstractAmazonAPI
                     'test',
                     'test'
                 ),
-                new Common\AbstractLogger()
+                new Common\Logger\AbstractLogger()
             );
         }
         return $this->_sdk;
@@ -325,7 +329,7 @@ class API extends AbstractAmazonAPI
                     'test',
                     'test'
                 ),
-                new Common\AbstractLogger()
+                new Common\Logger\AbstractLogger()
             );
         }
         return $this->_notification;

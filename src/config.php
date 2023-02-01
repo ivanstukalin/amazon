@@ -1,8 +1,8 @@
 <?php
 const TEST_AMAZON_USER_DATA = [
-    'access_token' => 123,
-    'refresh_token' => 123,
-    'token_type' => 123,
+    'access_token' => '123',
+    'refresh_token' => '123',
+    'token_type' => '123',
     'expires_in' => 1675174699,
 ];
 

@@ -1,5 +1,8 @@
 <?php
 require 'vendor/autoload.php';
+require 'src/config.php';
+require 'mock/buyer.29664.json';
+require 'mock/order.16400.json';
 
 $order           = new \App\Data\Order('16400');
 $buyer           = \App\Data\Buyer::createById('29664');

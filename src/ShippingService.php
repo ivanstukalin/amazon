@@ -40,6 +40,7 @@ class ShippingService implements ShippingServiceInterface
             $orderData                              = array_merge($order->data, $buyer->getData());
             $orderData['marketplace_id']            = TEST_MARKETPLACE_ID;
             $orderData['shipping_speed_categories'] = self::AVAILABLE_SHIP_SPEED_CATEGORIES;
+            $orderData['buyer']                     = $buyer->getData();
             $fulfillmentPreviews                    = $this->_api->getFulfillmentPreview($orderData);
 
             $this->_api->createFulfillmentOrder(

@@ -27,8 +27,8 @@ class Buyer implements BuyerInterface
     }
 
     public static function createById(string $id): Buyer {
-        $data = file_get_contents("buyer.{$id}.json");
-        $decodedData = json_decode($data);
+        $data = file_get_contents("mock/buyer.{$id}.json");
+        $decodedData = json_decode($data, true);
 
         return new self($decodedData);
     }
@@ -50,7 +50,7 @@ class Buyer implements BuyerInterface
     /**
      * @inheritDoc
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         // TODO: Implement offsetExists() method.
     }
@@ -66,7 +66,7 @@ class Buyer implements BuyerInterface
     /**
      * @inheritDoc
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         // TODO: Implement offsetSet() method.
     }
@@ -74,7 +74,7 @@ class Buyer implements BuyerInterface
     /**
      * @inheritDoc
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         // TODO: Implement offsetUnset() method.
     }

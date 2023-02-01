@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Exception\API;
+namespace App\Common\API\Exception\API;
 
 class Api extends \Exception
 {

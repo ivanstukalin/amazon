@@ -8,6 +8,6 @@ class Order extends AbstractOrder
     {
         $orderJSON = file_get_contents("mock/order.{$id}.json");
 
-        return json_decode($orderJSON);
+        return json_decode($orderJSON, true);
     }
 }
